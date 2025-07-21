@@ -24,7 +24,7 @@ export interface BackendImageQueryInput {
   orientation?: string;
   color?: string;
   prompt?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface BackendImageSearchResult {

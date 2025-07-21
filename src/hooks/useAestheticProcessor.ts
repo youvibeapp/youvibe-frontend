@@ -119,7 +119,7 @@ export const useAestheticProcessorWithProgress = (
             embedding: analysisResult.semantic_embedding,
           },
           images: {
-            images: imageResults.map((img: any) => ({
+            images: imageResults.map((img: BackendImageSearchResult) => ({
               id: img.id,
               title: img.title,
               description: img.description,

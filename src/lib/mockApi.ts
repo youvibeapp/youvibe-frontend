@@ -49,7 +49,7 @@ const mockResults: AestheticResult[] = [
 ];
 
 export async function analyzeAesthetic(
-  base64Image: string
+  _base64Image: string
 ): Promise<AestheticResult> {
   // Simulate API processing time
   await new Promise(resolve =>
@@ -75,7 +75,7 @@ export async function analyzeAesthetic(
 }
 
 export async function uploadImage(
-  base64Image: string
+  _base64Image: string
 ): Promise<{ imageId: string }> {
   // Simulate upload time
   await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 500));
