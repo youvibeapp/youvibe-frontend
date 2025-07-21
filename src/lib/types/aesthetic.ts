@@ -1,8 +1,4 @@
-import type {
-  BackendImageAnalysisResult,
-  BackendImageSearchResult,
-  BackendImageDescriptiveMetadata,
-} from './backend';
+// Note: Backend types are imported directly where needed
 
 // =============================================
 // AESTHETIC PROCESSOR TYPES

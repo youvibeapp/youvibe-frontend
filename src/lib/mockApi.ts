@@ -49,6 +49,7 @@ const mockResults: AestheticResult[] = [
 ];
 
 export async function analyzeAesthetic(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _base64Image: string
 ): Promise<AestheticResult> {
   // Simulate API processing time
@@ -75,6 +76,7 @@ export async function analyzeAesthetic(
 }
 
 export async function uploadImage(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _base64Image: string
 ): Promise<{ imageId: string }> {
   // Simulate upload time
