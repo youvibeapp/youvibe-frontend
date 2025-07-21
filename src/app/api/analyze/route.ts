@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { apiConfig, endpoints } from '@/lib/config';
+import { endpoints } from '@/lib/config';
 import type {
   BackendImageAnalysisInput,
   BackendImageAnalysisResult,
   BackendErrorResponse,
 } from '@/lib/types/backend';
+
+const BACKEND_URL = process.env.FASTAPI_BASE_URL || 'https://youvibe-backend-production.up.railway.app';
+const API_KEY = process.env.FASTAPI_API_KEY || 'Rw_xHu56l4QNuAXl0C8hf5-kR4fut1MDRL2TwOWxPAU';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +23,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Construct the backend URL
-    const backendUrl = `${apiConfig.fastApiBaseUrl}${endpoints.analyze}`;
+    const backendUrl = `${BACKEND_URL}${endpoints.analyze}`;
 
     // Get query parameters (like engine)
     const searchParams = request.nextUrl.searchParams;
@@ -37,7 +40,7 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': apiConfig.fastApiKey,
+        'X-API-Key': API_KEY,
       },
       body: JSON.stringify(body),
     });
