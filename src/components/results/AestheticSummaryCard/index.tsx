@@ -83,7 +83,7 @@ export default function AestheticSummaryCard({
                   <p className="leading-relaxed break-words">
                     {celebrityMatch?.matches?.[0]?.name ? (
                       <>
-                        You're radiating{' '}
+                        You&apos;re radiating{' '}
                         <span className="font-medium">
                           {celebrityMatch.matches[0].name}
                         </span>{' '}

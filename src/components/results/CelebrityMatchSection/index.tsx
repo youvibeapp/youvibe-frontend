@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import {
   Carousel,
   CarouselContent,
@@ -81,9 +82,11 @@ export default function CelebrityMatchSection({
                     <div className="flex flex-col items-center">
                       <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-200 shadow-md">
                         {userImageUrl ? (
-                          <img
+                          <Image
                             src={userImageUrl}
                             alt="Your photo"
+                            width={64}
+                            height={64}
                             className="w-full h-full object-cover"
                           />
                         ) : (
@@ -98,9 +101,11 @@ export default function CelebrityMatchSection({
                     <div className="flex flex-col items-center">
                       <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-200 shadow-md">
                         {celebrityImage ? (
-                          <img
+                          <Image
                             src={celebrityImage}
                             alt={match.name}
+                            width={64}
+                            height={64}
                             className="w-full h-full object-cover"
                           />
                         ) : (
