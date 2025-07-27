@@ -11,7 +11,11 @@ import { uploadImage } from '@/lib/mockApi';
 
 // New imports for aesthetic processor
 import { useAestheticProcessorWithProgress } from '@/hooks/useAestheticProcessor';
-import { analyzeImage, generateImages } from '@/lib/api-client';
+import {
+  analyzeImage,
+  matchCelebrities,
+  generateImages,
+} from '@/lib/api-client';
 import { useAestheticResults } from '@/contexts/AestheticResultsContext';
 
 export default function UploadPage() {
@@ -34,18 +38,22 @@ export default function UploadPage() {
     processImage,
     reset,
     retry,
-  } = useAestheticProcessorWithProgress(analyzeImage, generateImages);
+  } = useAestheticProcessorWithProgress(
+    analyzeImage,
+    matchCelebrities,
+    generateImages
+  );
 
   // Auto-navigate to results when processing is complete
   useEffect(() => {
     if (isComplete && result) {
-      // Store result in context for results page
-      setContextResult(result);
+      // Store result in context for results page with original image
+      setContextResult(result, previewImage || undefined);
 
       // Navigate to results page
       router.push('/results');
     }
-  }, [isComplete, result, setContextResult, router]);
+  }, [isComplete, result, setContextResult, router, previewImage]);
 
   // Handle file selection and processing
   const handleFileChange = async (file: File) => {
@@ -86,6 +94,8 @@ export default function UploadPage() {
     switch (state) {
       case 'analyzing':
         return 'analyzing your aesthetic...';
+      case 'matching':
+        return 'finding your celebrity twin...';
       case 'generating':
         return 'creating your moodboard...';
       case 'complete':

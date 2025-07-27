@@ -16,7 +16,7 @@ import {
 
 export default function ResultsPage() {
   const router = useRouter();
-  const { result, clearResult } = useAestheticResults();
+  const { result, originalImageUrl, clearResult } = useAestheticResults();
 
   // Redirect to home if no result data
   useEffect(() => {
@@ -32,7 +32,10 @@ export default function ResultsPage() {
 
   // Transform data for components
   const moodboardProps = transformToMoodboardProps(result);
-  const summaryProps = transformToSummaryProps(result);
+  const summaryProps = transformToSummaryProps(
+    result,
+    originalImageUrl || undefined
+  );
 
   // Handler for starting over
   const handleStartOver = () => {

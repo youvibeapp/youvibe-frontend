@@ -7,5 +7,6 @@ export const apiConfig = {
 export const endpoints = {
   analyze: '/analyze/',
   generate: '/generate/',
+  celebrityMatch: '/celebrity-match/',
   health: '/',
 } as const;

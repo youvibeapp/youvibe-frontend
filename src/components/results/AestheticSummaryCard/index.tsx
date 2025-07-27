@@ -1,44 +1,46 @@
 import { Card } from '@/components/ui/card';
+import CelebrityMatchSection from '../CelebrityMatchSection';
 import { AestheticSummaryCardProps } from './types';
 
 export default function AestheticSummaryCard({
-  aestheticSummary = 'Your vibe is: a cozy soft girl aesthetic that has endless confidence.',
-  celebrityMatch = 'Your aesthetic match is: ✨ Hailey Bieber ✨',
-  colorStory = [
-    { color: '#d2bdb1', percentage: 35 },
-    { color: '#f38695', percentage: 30 },
-    { color: '#0c2a6b', percentage: 25 },
-    { color: '#fffcf4', percentage: 10 },
-  ],
+  analysis,
+  celebrityMatch,
+  userImageUrl,
 }: AestheticSummaryCardProps) {
   return (
     <Card className="p-6 rounded-3xl shadow-sm border-none">
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-lg font-semibold text-black">
-            Aesthetic Summary
+      <div className="space-y-6">
+        {/* Your Aesthetic DNA Section */}
+        <div className="text-left">
+          <h3 className="text-lg font-semibold text-gray-800 mb-1">
+            Your Aesthetic DNA
           </h3>
-          <p className="text-sm text-[#606367] mt-1">{aestheticSummary}</p>
+          <p className="text-sm text-gray-600 mb-3">
+            {celebrityMatch && celebrityMatch.matches.length > 0 ? (
+              <>
+                You're radiating{' '}
+                <span className="font-medium">
+                  {celebrityMatch.matches[0].name}
+                </span>{' '}
+                energy - confident, chill and a little dreamy.
+              </>
+            ) : (
+              <>
+                Your vibe is:{' '}
+                {analysis.styleDescription ||
+                  `${analysis.style} ${analysis.mood}`.trim()}
+              </>
+            )}
+          </p>
         </div>
-        <div>
-          <h3 className="text-lg font-semibold text-black">Celebrity Match</h3>
-          <p className="text-sm text-[#606367] mt-1">{celebrityMatch}</p>
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-black">Your Color Story</h3>
-          <div className="w-full h-3 rounded-full overflow-hidden flex mt-2">
-            {colorStory.map((colorItem, index) => (
-              <div
-                key={index}
-                className="bg-[#d2bdb1]"
-                style={{
-                  backgroundColor: colorItem.color,
-                  width: `${colorItem.percentage}%`,
-                }}
-              />
-            ))}
-          </div>
-        </div>
+
+        {/* Celebrity Match Section */}
+        {celebrityMatch && (
+          <CelebrityMatchSection
+            celebrityMatch={celebrityMatch}
+            userImageUrl={userImageUrl}
+          />
+        )}
       </div>
     </Card>
   );

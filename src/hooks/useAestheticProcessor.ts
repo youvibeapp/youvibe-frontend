@@ -4,11 +4,14 @@ import type {
   AestheticInput,
   AestheticResult,
   AestheticError,
+  ProcessedCelebrityMatch,
 } from '@/lib/types/aesthetic';
 import type {
   BackendImageAnalysisResult,
   BackendImageQueryInput,
   BackendImageSearchResult,
+  BackendCelebrityMatchInput,
+  BackendCelebrityMatchResult,
 } from '@/lib/types/backend';
 
 // =============================================
@@ -50,6 +53,10 @@ export const useAestheticProcessorWithProgress = (
     imageBase64: string,
     options?: { engine?: string }
   ) => Promise<BackendImageAnalysisResult>,
+  matchCelebrities: (
+    input: BackendCelebrityMatchInput,
+    options?: { engine?: string; imageExtractor?: string }
+  ) => Promise<BackendCelebrityMatchResult>,
   generateImages: (
     input: BackendImageQueryInput,
     options?: { provider?: string; maxImages?: number }
@@ -62,7 +69,8 @@ export const useAestheticProcessorWithProgress = (
 
   // Derived state
   const isIdle = state === 'idle';
-  const isProcessing = state === 'analyzing' || state === 'generating';
+  const isProcessing =
+    state === 'analyzing' || state === 'matching' || state === 'generating';
   const isComplete = state === 'complete';
   const hasError = state === 'error';
 
@@ -84,6 +92,27 @@ export const useAestheticProcessorWithProgress = (
           engine: options?.analysisEngine,
         });
 
+        // Step 2: Celebrity Matching (only if facial metadata is available)
+        let celebrityMatchResult: BackendCelebrityMatchResult | undefined;
+        if (analysisResult.facial_metadata) {
+          setState('matching');
+          try {
+            celebrityMatchResult = await matchCelebrities(
+              {
+                facial_metadata: analysisResult.facial_metadata,
+                max_matches: 3,
+              },
+              {
+                engine: 'pydantic-ai',
+                imageExtractor: 'tmdb',
+              }
+            );
+          } catch (celebrityError) {
+            console.warn('Celebrity matching failed:', celebrityError);
+            // Continue without celebrity match - this is optional
+          }
+        }
+
         // Transform analysisResult to BackendImageQueryInput
         const metadata = analysisResult.descriptive_metadata;
         const queryInput = {
@@ -93,14 +122,35 @@ export const useAestheticProcessorWithProgress = (
           prompt: `${metadata?.style} aesthetic moodboard`,
         };
 
-        // Step 2: Image Generation
+        // Step 3: Image Generation
         setState('generating');
         const imageResults = await generateImages(queryInput, {
           provider: options?.generationProvider,
           maxImages: options?.maxImages,
         });
 
-        // Step 3: Transform results (simplified for now)
+        // Step 4: Transform results
+        // Transform celebrity match results
+        const processedCelebrityMatch: ProcessedCelebrityMatch | undefined =
+          celebrityMatchResult
+            ? {
+                matches: celebrityMatchResult.matches.map(match => ({
+                  name: match.name,
+                  description: match.description,
+                  confidenceScore: match.confidence_score,
+                  profession: match.profession,
+                  matchReasons: match.match_reasons,
+                  images: match.images.map(img => ({
+                    filePath: img.file_path,
+                    width: img.width,
+                    height: img.height,
+                    fullUrl: `https://image.tmdb.org/t/p/w500${img.file_path}`, // TMDB image URL format
+                  })),
+                })),
+                searchSummary: celebrityMatchResult.search_summary,
+              }
+            : undefined;
+
         const combinedResult: AestheticResult = {
           analysis: {
             tags: analysisResult.descriptive_metadata?.tags || [],
@@ -109,6 +159,44 @@ export const useAestheticProcessorWithProgress = (
             mood: analysisResult.descriptive_metadata?.mood || '',
             colorPalette:
               analysisResult.descriptive_metadata?.color_palette_hexcodes || [],
+            facialAnalysis: analysisResult.facial_metadata
+              ? {
+                  // Basic demographics
+                  ageRange: analysisResult.facial_metadata.age_range,
+                  gender: analysisResult.facial_metadata.gender,
+                  ethnicity: analysisResult.facial_metadata.ethnicity,
+
+                  // Facial Structure Analysis
+                  jawLine: analysisResult.facial_metadata.jaw_line,
+                  chin: analysisResult.facial_metadata.chin,
+                  cheeks: analysisResult.facial_metadata.cheeks,
+                  forehead: analysisResult.facial_metadata.forehead,
+
+                  // Individual Facial Features
+                  eyebrows: analysisResult.facial_metadata.eyebrows,
+                  eyes: analysisResult.facial_metadata.eyes,
+                  nose: analysisResult.facial_metadata.nose,
+                  lips: analysisResult.facial_metadata.lips,
+
+                  // Style & Grooming Assessment
+                  skinTexture: analysisResult.facial_metadata.skin_texture,
+                  beardMoustacheArea:
+                    analysisResult.facial_metadata.beard_moustache_area,
+                  currentHairStyle:
+                    analysisResult.facial_metadata.current_hair_style,
+                  hairStyleImprovementSuggestions:
+                    analysisResult.facial_metadata
+                      .hair_style_improvement_suggestions,
+                  clothingStyleSuggestions:
+                    analysisResult.facial_metadata.clothing_style_suggestions,
+
+                  // Overall Assessment
+                  overallAppearance:
+                    analysisResult.facial_metadata.overall_appearance,
+                  confidenceScore:
+                    analysisResult.facial_metadata.confidence_score,
+                }
+              : undefined,
             primaryColor:
               analysisResult.descriptive_metadata
                 ?.color_palette_hexcodes?.[0] || '#000000',
@@ -135,6 +223,7 @@ export const useAestheticProcessorWithProgress = (
             query: 'aesthetic moodboard',
             provider: options?.generationProvider || 'flickr',
           },
+          celebrityMatch: processedCelebrityMatch,
           metadata: {
             processingTimeMs: 0, // TODO: Calculate actual time
             timestamp: new Date(),
@@ -159,7 +248,7 @@ export const useAestheticProcessorWithProgress = (
         console.error('Processing failed:', aestheticError);
       }
     },
-    [analyzeImage, generateImages]
+    [analyzeImage, matchCelebrities, generateImages]
   );
 
   const reset = useCallback(() => {

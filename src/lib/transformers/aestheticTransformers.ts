@@ -23,41 +23,32 @@ export function transformToMoodboardProps(
 }
 
 /**
- * Transforms AestheticResult.analysis into AestheticSummaryCard props
+ * Transforms AestheticResult into AestheticSummaryCard props
  */
 export function transformToSummaryProps(
-  result: AestheticResult | null
+  result: AestheticResult | null,
+  userImageUrl?: string
 ): AestheticSummaryCardProps {
   if (!result?.analysis) {
-    return {}; // Will use default props
+    // Return a minimal default analysis structure
+    return {
+      analysis: {
+        tags: [],
+        caption: '',
+        style: '',
+        mood: '',
+        colorPalette: [],
+        primaryColor: '#000000',
+        mainTags: [],
+        styleDescription: '',
+      },
+    };
   }
 
-  const { analysis } = result;
-
-  // Create color story from the color palette
-  const colorStory = analysis.colorPalette.slice(0, 4).map((color, index) => {
-    // Simple percentage distribution - can be made more sophisticated
-    const percentages = [35, 30, 25, 10];
-    return {
-      color,
-      percentage: percentages[index] || 5,
-    };
-  });
-
-  // Create aesthetic summary
-  const aestheticSummary = analysis.styleDescription
-    ? `Your vibe is: ${analysis.styleDescription} aesthetic that captures your unique style.`
-    : undefined;
-
-  // Create celebrity match (placeholder for now - could be enhanced)
-  const celebrityMatch = analysis.style
-    ? `Your aesthetic matches: ✨ ${analysis.style} vibes ✨`
-    : undefined;
-
   return {
-    aestheticSummary,
-    celebrityMatch,
-    colorStory: colorStory.length > 0 ? colorStory : undefined,
+    analysis: result.analysis,
+    celebrityMatch: result.celebrityMatch,
+    userImageUrl,
   };
 }
 

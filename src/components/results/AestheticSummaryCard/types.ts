@@ -1,8 +1,10 @@
+import type {
+  ProcessedAnalysis,
+  ProcessedCelebrityMatch,
+} from '@/lib/types/aesthetic';
+
 export interface AestheticSummaryCardProps {
-  aestheticSummary?: string;
-  celebrityMatch?: string;
-  colorStory?: Array<{
-    color: string;
-    percentage: number;
-  }>;
+  analysis: ProcessedAnalysis;
+  celebrityMatch?: ProcessedCelebrityMatch;
+  userImageUrl?: string;
 }
