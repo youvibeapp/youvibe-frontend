@@ -46,10 +46,21 @@ export default function ResultsPage() {
   return (
     <AppShell>
       <Header />
-      <main className="flex-grow flex flex-col space-y-4 p-2 overflow-y-auto">
-        <AestheticSummaryCard {...summaryProps} />
-        <MoodboardGrid {...moodboardProps} />
-        <ActionButtons onStartOver={handleStartOver} />
+      <main className="flex-grow flex flex-col p-2 overflow-hidden h-full">
+        {/* Summary Section - Fixed Height with max constraint */}
+        <div className="flex-shrink-0 mb-3 max-h-[35vh] overflow-y-auto">
+          <AestheticSummaryCard {...summaryProps} />
+        </div>
+
+        {/* Moodboard Section - Flexible Height */}
+        <div className="flex-1 mb-3 min-h-0 overflow-hidden">
+          <MoodboardGrid {...moodboardProps} />
+        </div>
+
+        {/* Actions Section - Fixed Height */}
+        <div className="flex-shrink-0">
+          <ActionButtons onStartOver={handleStartOver} />
+        </div>
       </main>
     </AppShell>
   );

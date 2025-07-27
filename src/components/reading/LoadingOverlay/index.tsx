@@ -7,7 +7,7 @@ export default function LoadingOverlay({
   showIcon = true,
 }: LoadingOverlayProps) {
   return (
-    <main className="flex-grow flex items-center justify-center p-2 h-[647px]">
+    <main className="flex-grow flex items-center justify-center p-2">
       <div className="relative w-full max-w-xl h-full rounded-[32px] overflow-hidden shadow-lg mx-auto">
         {backgroundImage && (
           <Image

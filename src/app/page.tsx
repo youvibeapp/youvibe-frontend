@@ -119,7 +119,7 @@ export default function UploadPage() {
 
       {/* Processing/Loading Overlay */}
       {(isProcessing || isComplete || hasError) && (
-        <div className="relative">
+        <div className="relative flex-grow flex flex-col">
           <LoadingOverlay
             backgroundImage={previewImage || undefined}
             loadingText={getLoadingText()}
