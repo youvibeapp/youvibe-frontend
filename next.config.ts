@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     domains: [
       'upload.wikimedia.org',
       'images.pexels.com',
+      'image.tmdb.org',
       'live.staticflickr.com',
       'farm1.staticflickr.com',
       'farm2.staticflickr.com',
